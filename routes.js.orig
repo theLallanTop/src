@@ -1,0 +1,269 @@
+import React, { Component, PropTypes } from 'react';
+import { Home, IntroSwipe, SignUp, Login, Playerview } from './containers';
+import {
+  TopStories,
+  CategoriesItemListview,
+  StoryListView,
+  WishListView,
+  ProfileEditView,
+  StoryQueueView,
+  SearchBarView,
+  MyPlan,
+<<<<<<< HEAD
+  Info,
+  AboutUs
+=======
+  CCAvenueWebView,
+  Info
+>>>>>>> origin/master
+} from './containers';
+import { RatingView, BankListName } from './components';
+import { Text, View, Platform, TouchableOpacity, Image } from 'react-native';
+import { connect } from 'react-redux';
+import { Colors, Images, Fonts } from './theme';
+import NavigationDrawer from './NavigationDrawer';
+import { Router, Scene, Actions as NavigationActions } from 'react-native-router-flux';
+import { Badge, Icon } from 'native-base';
+import { login, loginWithSocial } from './redux/modules/auth';
+const Styles = {
+  container: {
+    flex: 1
+  },
+  navBar: {
+    backgroundColor: Colors.BaseColor,
+    borderBottomWidth: 0,
+  },
+  dashboardNavBar: {
+    flex:1,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    color: Colors.snow
+  },
+  leftButton: {
+    tintColor: Colors.transparent
+  },
+  rightButton: {
+    color: Colors.snow
+  },
+  navTitle: {
+    color: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropdownOptions: {
+    marginTop: 33,
+    borderColor: '#ccc',
+    borderWidth: 2,
+    width: 60,
+    height: 30
+  },
+  logout: {
+    color: Colors.white,
+    marginLeft: -10,
+    marginTop: -5
+  },
+  renderTitleStyle: {
+    alignSelf: 'center',
+    width: null,
+    ...Platform.select({
+      ios: {
+        top: 24,
+      },
+      android: {
+        top: 14,
+      },
+    }),
+    right: 0,
+  },
+  rightButtonView: {
+    flexDirection: 'row',
+    width: 100,
+    height: 37,
+    position: 'absolute',
+    ...Platform.select({
+      ios: {
+        top: 0,
+      },
+      android: {
+        top: 0,
+      },
+    }),
+    right: 2,
+    ...Platform.select({
+      ios: {
+        padding: 10,
+      },
+      android: {
+        padding: 8,
+      },
+    }),
+  },
+  rightButtonStyle: {
+    marginLeft: 15,
+  },
+  badgeStyle: {
+    marginTop: -12,
+    marginLeft: -7,
+    width: 23,
+    height: 23,
+    backgroundColor: Colors.skyColor,
+    borderWidth: 0.5,
+    borderColor: Colors.white,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  badgeTextStyle: {
+    fontSize: Fonts.size.tiny,
+    fontFamily: Fonts.Walkthrough.medium,
+    color: Colors.white,
+    marginLeft: 0,
+  },
+  titleTextStyle: {
+    textAlign: 'center',
+    color: Colors.white,
+    fontSize: Fonts.size.h6,
+    fontFamily: Fonts.Walkthrough.medium
+  },
+  customLeftBtnStyle: {
+    width: 20,
+    height: 15,
+    resizeMode: 'contain'
+  },
+};
+class AppRouter extends Component {
+
+  render() {
+    return (
+      <Router
+        navigationBarStyle={Styles.navBar}
+        titleStyle={Styles.titleTextStyle}
+        drawerImage={Images.navSideMenuBarIcon}
+        hideNavBar={false}
+        backButtonImage={Images.navigationbackbuttonicon}
+      >
+        <Scene key="drawer" component={NavigationDrawer} type="replace" >
+          <Scene key="drawerChildrenWrapper"  >
+            <Scene
+              key="home"
+              component={Home}
+              refresh={true}
+              renderTitle={() =>
+                <View style={Styles.renderTitleStyle}>
+                  <Text style={Styles.titleTextStyle}>Fir kya hua </ Text>
+                </View>
+              }
+              hideNavBar={false}
+              renderRightButton={() =>
+                <View style={Styles.rightButtonView}>
+                  <TouchableOpacity onPress={() => NavigationActions.searchbarview()}>
+                    <View style={{ alignItems: 'center', justifyContent:'center'}}>
+                      <Icon name="md-search" style={{ fontSize: 20, color: Colors.IntroUnselectedViewColor }}/>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={Styles.rightButtonStyle}  onPress={() => console.log('hello')}>
+                    <View style={{ alignItems: 'center', justifyContent:'center'}}>
+                      <Icon name="ios-notifications" style={{ fontSize: 20, color: Colors.IntroUnselectedViewColor }}/>
+                    </View>
+                  </TouchableOpacity>
+                    <TouchableOpacity style={Styles.rightButtonStyle} onPress={() => NavigationActions.wishlist()}>
+                       <View style={{ alignItems: 'center', justifyContent:'center'}}>
+                         <Icon name="md-heart" style={{ fontSize: 20, color: Colors.IntroUnselectedViewColor }}/>
+                       </View>
+                     </TouchableOpacity>
+                  <Badge style={Styles.badgeStyle}>
+                    <Text style={Styles.badgeTextStyle}>
+                      {this.props.wishListData ? this.props.wishListData.length : '0'}
+                    </Text>
+                  </Badge>
+                </View>
+              }
+            />
+            <Scene
+              key="myPlan" component={MyPlan}
+              title="My Plan" hideNavBar={false}
+              leftButtonIconStyle = {Styles.customLeftBtnStyle}
+            />
+          </Scene>
+        </Scene>
+        <Scene key="info" component={Info} hideNavBar={true} initial />
+        <Scene key="intro" component={IntroSwipe} hideNavBar={true} type="replace"/>
+        <Scene key="signUp" component={SignUp} hideNavBar={true} />
+        <Scene key="login" component={Login} hideNavBar={true} />
+        <Scene
+          key="topstories"
+          component={TopStories}
+          hideNavBar={true}
+        />
+        <Scene key="web" component={CCAvenueWebView} hideNavBar={true}  type="replace" />
+
+        <Scene key="playerview" component={Playerview} hideNavBar={true} direction="vertical"/>
+        <Scene key="categoriesitemlist" component={CategoriesItemListview} hideNavBar={true}/>
+<<<<<<< HEAD
+        <Scene key="storylistview" title="Subscribe" component={StoryListView} hideNavBar={false} leftButtonIconStyle = {Styles.customLeftBtnStyle}/>
+=======
+        <Scene
+          key="storylistview"
+          renderTitle={() =>
+            <View style={Styles.renderTitleStyle}>
+              <Text style={Styles.titleTextStyle}>Subscribe</ Text>
+            </View>
+          }
+          component={StoryListView}
+          hideNavBar={false}
+          leftButtonIconStyle = {{ width: 20, height: 15, resizeMode: 'contain'}}
+        />
+>>>>>>> origin/master
+        <Scene
+          key="wishlist"
+          renderTitle={() =>
+                <View style={Styles.renderTitleStyle}>
+                  <Text style={Styles.titleTextStyle}>Wish List</ Text>
+                </View>
+              }
+          component={WishListView}
+          hideNavBar={false}
+          leftButtonIconStyle = {Styles.customLeftBtnStyle}
+        />
+        <Scene
+          key="bankListName"
+          renderTitle={() =>
+            <View style={Styles.renderTitleStyle}>
+              <Text style={Styles.titleTextStyle}>Select your bank</ Text>
+            </View>
+          }
+          component={BankListName}
+          hideNavBar={false}
+          leftButtonIconStyle = {{ width: 20, height: 15, resizeMode: 'contain'}}
+        />
+        <Scene key="searchbarview" component={SearchBarView} hideNavBar={true} />
+<<<<<<< HEAD
+        <Scene key="profileeditview" title="Edit Profile" component={ProfileEditView} hideNavBar={false} leftButtonIconStyle = {Styles.customLeftBtnStyle}/>
+        <Scene key="aboutus" title="About Us" component={AboutUs} hideNavBar={false} leftButtonIconStyle = {Styles.customLeftBtnStyle}/>
+=======
+        <Scene
+          key="profileeditview"
+          renderTitle={() =>
+            <View style={Styles.renderTitleStyle}>
+              <Text style={Styles.titleTextStyle}>Edit Profile</ Text>
+            </View>
+          }
+          component={ProfileEditView}
+          hideNavBar={false}
+          leftButtonIconStyle = {{ width: 20, height: 15, resizeMode: 'contain'}}
+        />
+>>>>>>> origin/master
+        <Scene key="queueList" renderTitle={() =>
+                <View style={Styles.renderTitleStyle}>
+                  <Text style={Styles.titleTextStyle}>Story Queue</ Text>
+                </View>
+              } component={StoryQueueView} hideNavBar={false} leftButtonIconStyle = {Styles.customLeftBtnStyle} direction="vertical" />
+        <Scene key="ratingview" title="Rating" component={RatingView} hideNavBar={false} leftButtonIconStyle = {Styles.customLeftBtnStyle} direction="vertical" />
+      </Router>
+    );
+  }
+}
+
+export default connect(state =>({
+  wishListData: state.wishlist.wishListData,
+}))(AppRouter)

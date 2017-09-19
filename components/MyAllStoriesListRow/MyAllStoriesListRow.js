@@ -1,0 +1,148 @@
+import React, { Component, PropTypes } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { Colors } from '../../theme';
+import { Grid, Row, Col, Button, Icon } from 'native-base';
+import styles from './MyAllStoriesListRowStyle';
+import { checkIfStoryExists } from '../../helpers/Download';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { selectStory } from '../../redux/modules/storyPlayer';
+import { Actions as NavActions } from 'react-native-router-flux';
+
+export default class MyAllStoriesListRow extends Component {
+
+  constructor (props) {
+    super(props);
+    this.state = {
+      isMore: false,
+      isDownload: false
+    };
+  }
+  static contextTypes = {
+    store: PropTypes.object
+  };
+
+  static propTypes = {
+    allstorieslistrow: PropTypes.any,
+    onPress: PropTypes.any,
+    isQueue: PropTypes.any,
+    queueListPlay: PropTypes.any,
+  };
+
+  onPressPlayButton = () => {
+    // console.log("Download ============>>", this.props.allstorieslistrow);
+    const { store: { dispatch }} = this.context;
+    if(this.props.isQueue) {
+      this.props.queueListPlay(this.props.allstorieslistrow);
+
+    } else {
+      this.setState({
+        isDownload: true
+      });
+      new Promise((resolve, reject) => {
+        dispatch(checkIfStoryExists(dispatch, this.props.allstorieslistrow))
+          .then((res) => {
+            this.setState({
+              isDownload: false
+            });
+            dispatch(selectStory(this.props.allstorieslistrow, false, null, -1));
+            NavActions.playerview({ isNext: true });
+            resolve();
+          })
+          .catch((error) => {
+            console.log('Error in downloading');
+            this.setState({
+              isDownload: false
+            });
+            reject()
+          })
+      });
+    }
+  };
+
+  onPressMoreButton = () => {
+    if(this.props.isQueue) {
+      this.props.onPress(this.state.isMore, this.props.allstorieslistrow);
+    } else {
+      // this.setState({
+      //   isDownload: true
+      // });
+      this.props.onPress(this.state.isMore, this.props.allstorieslistrow);
+      const { store: { dispatch } } = this.context;
+      // new Promise((resolve, reject) => {
+      //   dispatch(checkIfStoryExists(dispatch, this.props.allstorieslistrow))
+      //     .then((res) => {
+      //       this.props.onPress(this.state.isMore, this.props.allstorieslistrow);
+      //       this.setState({
+      //         isDownload: false
+      //       });
+      //       resolve();
+      //     })
+      //     .catch((error) => {
+      //       console.log('Error in downloading');
+      //       this.setState({
+      //         isDownload: false
+      //       });
+      //       reject()
+      //     })
+      // });
+    }
+
+  };
+
+
+  render() {
+    let rate = [];
+    for(let i = 0; i < 5; i++){
+      if(this.props.allstorieslistrow.rating > i) {
+        rate.push(
+          <View key = {i}>
+            <View style={{ justifyContent: 'space-between' }}>
+              <Icon name='md-star' style={{color: '#F4BF27', fontSize: 18, marginLeft: 4, marginTop: 3 }} />
+            </View>
+          </View>
+        )
+      } else {
+        rate.push(
+          <View key={i}>
+            <View style={{ justifyContent: 'space-between' }}>
+              <Icon name='ios-star-outline' style={{color: '#FFE501', fontSize: 18, marginLeft: 4, marginTop: 3 }} />
+            </View>
+          </View>
+        )
+      }
+    }
+
+
+    return(
+      <View style={styles.mainTopStoriesRowStyle}>
+        <Spinner visible={this.state.isDownload} />
+        <Row style={styles.rowViewStyle}>
+          <Col style={styles.colListViewStyle}>
+            <Row>
+              <Text style={styles.rowTextStyle}>{this.props.allstorieslistrow.title}</Text>
+            </Row>
+            <Row>
+              { rate }
+            </Row>
+          </Col>
+          <Col style={{ flex: 0.2, alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity
+              underlayColor = {Colors.cloud}
+              style={{ height: 24, width: 30, justifyContent: 'center' }}
+              onPress={this.onPressPlayButton}>
+              <Icon name='md-play' style={{color: Colors.statusBarColor, fontSize: 20}} />
+            </TouchableOpacity>
+          </Col>
+          <Col style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity
+              underlayColor = {Colors.cloud}
+              style={{ height: 24, width: 30, justifyContent: 'center' }}
+              onPress={this.onPressMoreButton}>
+              <Icon name='md-more' style={{color: Colors.charcoallight, fontSize: 20}} />
+            </TouchableOpacity>
+          </Col>
+        </Row>
+      </View>
+    );
+  }
+}
